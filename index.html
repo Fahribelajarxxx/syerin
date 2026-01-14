@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Upload Hub</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        /* --- CSS Variables untuk Tema --- */
+        :root {
+            --accent-color: #CCDB39; /* Warna aksen hijau lime */
+            --accent-color-hover: #b8c533; /* Warna aksen saat hover */
+            --bg-main: #1e1e1e; /* Background area konten gelap */
+            --bg-darker: #161616; /* Background untuk media box */
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border-color: #333333;
+        }
+
+        /* --- Reset & Global Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--accent-color); /* Background utama hijau lime */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            color: var(--text-primary);
+        }
+
+        /* --- Container Utama --- */
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--bg-main);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-darker);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        header p {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* --- Layout Konten --- */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; /* Kolom unggah lebih kecil */
+            gap: 0; /* Tidak ada gap, dipisah oleh border */
+        }
+
+        /* --- Panel Unggah --- */
+        .upload-panel {
+            padding: 2rem;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .upload-panel h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .upload-panel h2 i {
+            color: var(--accent-color);
+        }
+
+        .upload-button {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        
+        .upload-button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-main);
+            transform: translateY(-2px);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .status-text {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* --- Panel Preview --- */
+        .preview-panel {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-panel h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .preview-panel h2 i {
+            color: var(--accent-color);
+        }
+
+        .media-display {
+            background-color: var(--bg-darker);
+            border-radius: 10px;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            flex-grow: 1; /* Memenuhi sisa ruang */
+        }
+        
+        #display-photo, #display-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Menjaga rasio asli */
+            display: none;
+        }
+        
+        #display-audio {
+            width: 100%;
+            display: none;
+        }
+        
+        .placeholder {
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        .placeholder i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .upload-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>Media Upload Hub</h1>
+            <p>Pilih media untuk ditampilkan di area preview.</p>
+        </header>
+
+        <main class="content-wrapper">
+            
+            <!-- Panel Unggah -->
+            <section class="upload-panel">
+                <h2><i class="ri-upload-2-line"></i> Pilih Media</h2>
+                
+                <label for="image-upload" class="upload-button">
+                    <i class="ri-image-line"></i> Unggah Foto
+                </label>
+                <input type="file" id="image-upload" accept="image/*">
+
+                <label for="video-upload" class="upload-button">
+                    <i class="ri-video-line"></i> Unggah Video
+                </label>
+                <input type="file" id="video-upload" accept="video/*">
+                
+                <label for="audio-upload" class="upload-button">
+                    <i class="ri-music-2-line"></i> Unggah Audio
+                </label>
+                <input type="file" id="audio-upload" accept="audio/*">
+
+                <p id="upload-status" class="status-text">Tidak ada file yang dipilih.</p>
+            </section>
+            
+            <!-- Panel Preview -->
+            <section class="preview-panel">
+                <h2><i class="ri-play-circle-line"></i> Area Preview</h2>
+                
+                <div class="media-display">
+                    <img id="display-photo" alt="Hasil Foto">
+                    <video id="display-video" controls></video>
+                    <audio id="display-audio" controls></audio>
+                    <div class="placeholder" id="preview-placeholder">
+                        <i class="ri-file-image-line"></i>
+                        <p>Media akan tampil di sini</p>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // --- Seleksi Elemen DOM ---
+        const imageUpload = document.getElementById('image-upload');
+        const videoUpload = document.getElementById('video-upload');
+        const audioUpload = document.getElementById('audio-upload');
+
+        const displayPhoto = document.getElementById('display-photo');
+        const displayVideo = document.getElementById('display-video');
+        const displayAudio = document.getElementById('display-audio');
+        const previewPlaceholder = document.getElementById('preview-placeholder');
+        
+        const uploadStatus = document.getElementById('upload-status');
+
+        // --- Fungsi Bantuan untuk Menampilkan Media ---
+        function showOnlyMedia(type) {
+            // Sembunyikan semua elemen media dan placeholder
+            displayPhoto.style.display = 'none';
+            displayVideo.style.display = 'none';
+            displayAudio.style.display = 'none';
+            previewPlaceholder.style.display = 'none';
+
+            // Tampilkan elemen yang dipilih
+            switch (type) {
+                case 'photo':
+                    displayPhoto.style.display = 'block';
+                    break;
+                case 'video':
+                    displayVideo.style.display = 'block';
+                    break;
+                case 'audio':
+                    displayAudio.style.display = 'block';
+                    break;
+            }
+        }
+
+        // --- Fungsi Umum untuk Menangani File ---
+        function handleFile(file) {
+            if (!file) return;
+            
+            const url = URL.createObjectURL(file);
+            let statusText = '';
+
+            if (file.type.startsWith('image/')) {
+                displayPhoto.src = url;
+                showOnlyMedia('photo');
+                statusText = `Foto "${file.name}" siap.`;
+            } else if (file.type.startsWith('video/')) {
+                displayVideo.src = url;
+                showOnlyMedia('video');
+                statusText = `Video "${file.name}" siap.`;
+            } else if (file.type.startsWith('audio/')) {
+                displayAudio.src = url;
+                showOnlyMedia('audio');
+                statusText = `Audio "${file.name}" siap.`;
+            }
+            
+            uploadStatus.innerText = statusText;
+            uploadStatus.style.color = 'var(--accent-color)';
+        }
+
+        // --- Event Listener untuk Semua Input File ---
+        imageUpload.addEventListener('change', (event) => {
+            handleFile(event.target.files[0]);
+        });
+
+        videoUpload.addEventListener('change', (event) => {
+            handleFile(event.target.files[0]);
+        });
+
+        audioUpload.addEventListener('change', (event) => {
+            handleFile(event.target.files[0]);
+        });
+
+    </script>
+
+</body>
+</html>
